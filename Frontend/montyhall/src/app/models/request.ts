@@ -1,8 +1,8 @@
-export class Request {
-    instanceId: string = '';
-    doorId: number = 0;
+export interface Request {
+    instanceId: string;
+    doorId: number;
 }
 
-export class RevealRequest {
-    id: string = '';
+export interface RevealRequest {
+    id: string;
 }

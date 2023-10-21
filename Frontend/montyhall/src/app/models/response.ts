@@ -1,3 +1,3 @@
-export class Response {
-    value: string = '';
+export interface Response {
+    value: string;
 }

@@ -70,15 +70,15 @@ namespace Monty_Hall_API.Controllers
                 if (MontyHallInstance.SelectedDoor != 0)
                 {
                     if (MontyHallInstance.OpenDoor == 0)
-                    {
-                        var result = MontyHallInstance.RevealDoor();
-                        await _context.SaveChangesAsync();
-                        return new JsonResult(Ok(result));
-                    }
-                    else
-                    {
-                        return new JsonResult(BadRequest("Already Revealed"));
-                    }
+                {
+                    var result = MontyHallInstance.RevealDoor();
+                    await _context.SaveChangesAsync();
+                    return new JsonResult(Ok(result));
+                }
+                else
+                {
+                    return new JsonResult(BadRequest("Already Revealed"));
+                }
                 }
                 else
                 {

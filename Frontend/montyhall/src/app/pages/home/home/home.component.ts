@@ -57,9 +57,6 @@ export class HomeComponent {
 		this.door2ButtonText = "Select"
 		this.door3ButtonText = "Select"
 
-		this.door1ButtonStatus = "enabled"
-		this.door2ButtonStatus = "enabled"
-		this.door3ButtonStatus = "enabled"
 		sessionStorage.setItem('isSelected', 'false')
 		const result = await this.getMontyHallInstanceId()
 		const instanceId: any = result?.value
@@ -91,7 +88,7 @@ export class HomeComponent {
 				this.door3ButtonStatus = "disabled"
 				break;
 		}
-		alert("Host have opened a door for you, and it has a goat. Now you can pick a door again :)")
+		alert("Monty have opened a door for you, and it has a goat. Now you can pick a door again :)")
 	}
 
 	async selectDoor(id: number) {
