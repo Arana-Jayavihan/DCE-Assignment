@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Monty_Hall_API.props" />
+</Project>

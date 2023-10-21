@@ -21,14 +21,14 @@ namespace Monty_Hall_API.Controllers
         public async Task<IActionResult> MontyHallInit()
         {
             MontyHall MontyHallInstance = new();
-            var response = new MontyHallInitResponseDto
-            {
-                InstanceId = MontyHallInstance.InstanceId
-            };
+            //var response = new MontyHallInitResponseDto
+            //{
+            //    InstanceId = MontyHallInstance.InstanceId
+            //};
 
             await _context.MontyHallInstances.AddAsync(MontyHallInstance);
             await _context.SaveChangesAsync();
-            return new JsonResult(Ok(response));
+            return new JsonResult(Ok(MontyHallInstance.InstanceId));
         }
 
         [HttpPost("select")]
@@ -62,20 +62,27 @@ namespace Monty_Hall_API.Controllers
         }
 
         [HttpPost("reveal")]
-        public async Task<IActionResult> RevealDoor(Guid id)
+        public async Task<IActionResult> RevealDoor(GuidDto request)
         {
-            MontyHall MontyHallInstance = await _context.MontyHallInstances.FindAsync(id);
+            MontyHall MontyHallInstance = await _context.MontyHallInstances.FindAsync(request.Id);
             if (MontyHallInstance != null)
             {
-                if (MontyHallInstance.OpenDoor == 0)
+                if (MontyHallInstance.SelectedDoor != 0)
                 {
-                    var result = MontyHallInstance.RevealDoor();
-                    await _context.SaveChangesAsync();
-                    return new JsonResult(Ok(result));
+                    if (MontyHallInstance.OpenDoor == 0)
+                    {
+                        var result = MontyHallInstance.RevealDoor();
+                        await _context.SaveChangesAsync();
+                        return new JsonResult(Ok(result));
+                    }
+                    else
+                    {
+                        return new JsonResult(BadRequest("Already Revealed"));
+                    }
                 }
                 else
                 {
-                    return new JsonResult(BadRequest("Already Revealed"));
+                    return new JsonResult(BadRequest("Not Selected"));
                 }
             }
             else
