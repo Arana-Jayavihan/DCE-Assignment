@@ -14,7 +14,7 @@ import { SimulationComponent } from './pages/simulation/simulation/simulation.co
     AppComponent,
     NavbarComponent,
     HomeComponent,
-    SimulationComponent
+    SimulationComponent,
   ],
   imports: [
     BrowserModule,

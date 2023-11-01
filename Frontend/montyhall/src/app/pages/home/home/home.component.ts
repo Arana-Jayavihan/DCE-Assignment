@@ -1,9 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { Response } from 'src/app/models/response';
 import { Request } from 'src/app/models/request';
 import { RevealRequest } from 'src/app/models/request';
-
+import { APIService } from 'src/app/services/api.service';
 @Component({
 	selector: 'app-home',
 	templateUrl: './home.component.html',
@@ -12,7 +10,7 @@ import { RevealRequest } from 'src/app/models/request';
 export class HomeComponent {
 
 	constructor(
-		private http: HttpClient
+		private service: APIService
 	) {
 
 	}
@@ -24,30 +22,6 @@ export class HomeComponent {
 	door2ButtonText: string = "Select"
 	door3ButtonText: string = "Select"
 
-	door1ButtonStatus: string = "enabled"
-	door2ButtonStatus: string = "enabled"
-	door3ButtonStatus: string = "enabled"
-
-	getMontyHallInstanceId() {
-		const url = 'https://localhost:7297/api/MontyHall/init';
-		return this.http.get<Response>(url).toPromise()
-	}
-
-	selectDoorRequest(request: Request) {
-		const url = 'https://localhost:7297/api/MontyHall/select';
-		return this.http.post<Response>(url, request).toPromise();
-	}
-
-	revealDoorRequest(request: RevealRequest) {
-		const url = 'https://localhost:7297/api/MontyHall/reveal';
-		return this.http.post<Response>(url, request).toPromise();
-	}
-
-	finalSelectRequest(request: Request) {
-		const url = 'https://localhost:7297/api/MontyHall/finalSelect'
-		return this.http.post<Response>(url, request).toPromise();
-	}
-
 	async initGame() {
 		this.door1Img = "../../../../assets/door_closed.jpg"
 		this.door2Img = "../../../../assets/door_closed.jpg"
@@ -58,7 +32,7 @@ export class HomeComponent {
 		this.door3ButtonText = "Select"
 
 		sessionStorage.setItem('isSelected', 'false')
-		const result = await this.getMontyHallInstanceId()
+		const result = await this.service.getMontyHallInstanceId()
 		const instanceId: any = result?.value
 		sessionStorage.setItem('instanceId', instanceId)
 	}
@@ -72,20 +46,20 @@ export class HomeComponent {
 		const request: RevealRequest = {
 			id: instanceId
 		}
-		const result: any = await this.revealDoorRequest(request)
+		const result: any = await this.service.revealDoorRequest(request)
 		const doorId: number = parseInt(result?.value)
 		switch (doorId){
 			case 1:
 				this.door1Img = "../../../../assets/door_opened.jpg";
-				this.door1ButtonStatus = "disabled"
+				this.door1ButtonText = "Revealed"
 				break;
 			case 2:
 				this.door2Img = "../../../../assets/door_opened.jpg";
-				this.door2ButtonStatus = "disabled"
+				this.door2ButtonText = "Revealed"
 				break;
 			case 3:
 				this.door3Img = "../../../../assets/door_opened.jpg";
-				this.door3ButtonStatus = "disabled"
+				this.door3ButtonText = "Revealed"
 				break;
 		}
 		alert("Monty have opened a door for you, and it has a goat. Now you can pick a door again :)")
@@ -99,7 +73,7 @@ export class HomeComponent {
 				instanceId: instanceId,
 				doorId: id
 			}
-			const result = await this.selectDoorRequest(request)
+			const result = await this.service.selectDoorRequest(request)
 			if (result?.value == "Selection Success") {
 				switch (id){
 					case 1:
@@ -122,18 +96,24 @@ export class HomeComponent {
 				instanceId: instanceId,
 				doorId: id
 			}
-			switch (request.doorId) {
-				case 1:
-					this.door1Img = "../../../../assets/door_opened.jpg";
-					break;
-				case 2:
-					this.door2Img = "../../../../assets/door_opened.jpg";
-					break;
-				case 3:
-					this.door3Img = "../../../../assets/door_opened.jpg";
-					break;
+			const result = await this.service.finalSelectRequest(request)
+			console.log(result)
+			if (result?.value != "Door Already Opened"){
+				switch (request.doorId) {
+					case 1:
+						this.door1Img = "../../../../assets/door_opened.jpg";
+						this.door1ButtonText = "Opened"
+						break;
+					case 2:
+						this.door2Img = "../../../../assets/door_opened.jpg";
+						this.door2ButtonText = "Opened"
+						break;
+					case 3:
+						this.door3Img = "../../../../assets/door_opened.jpg";
+						this.door3ButtonText = "Opened"
+						break;
+				}
 			}
-			const result = await this.finalSelectRequest(request)
 			alert(result?.value)
 		}
 	}
